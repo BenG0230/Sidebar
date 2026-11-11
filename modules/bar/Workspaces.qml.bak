@@ -1,0 +1,59 @@
+import QtQuick
+import Quickshell
+
+import QtQuick.Layouts
+import Quickshell.Widgets
+
+import qs.config
+import qs.utils
+import qs.components
+
+WrapperRectangle {
+    id: root 
+
+    required property ShellScreen screen
+
+    implicitWidth: 34 
+    radius: 25 
+    color: Colours.bg2
+    topMargin: 10
+    bottomMargin: 10
+    rightMargin: 1 
+
+
+    property var workspaces : SortFilterProxyModel {
+        id: workspaces
+        model: Niri.workspaces 
+
+        filters: ValueFilter {
+            roleName: "output"
+            value: root.screen.name
+        }
+    }
+
+    Column { 
+        id: layout
+        spacing: 10
+
+        anchors.horizontalCenter: parent.horizontalCenter
+
+
+        Repeater {
+            model: workspaces
+
+                Workspace {
+                    required property var modelData
+                    ws_id: modelData.id
+                    focused: modelData.isFocused
+                    occupied: modelData.activeWindowId != 0
+
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    // Layout.alignment: Qt.AlignCenter
+                    // Layout.topMargin: 5 
+                    // Layout.bottomMargin: 5
+                }
+
+        }
+    }
+}

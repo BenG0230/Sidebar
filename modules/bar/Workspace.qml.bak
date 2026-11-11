@@ -1,0 +1,91 @@
+pragma ComponentBehavior: Bound
+
+import Quickshell
+import QtQuick
+
+import QtQuick.Layouts
+import Quickshell.Widgets
+
+import qs.config
+import qs.utils
+import qs.components
+
+Rectangle {
+    id: root
+
+    required property int ws_id 
+    required property bool focused
+    required property bool occupied
+
+    SortFilterProxyModel {
+        id: windows
+        model: Niri.windows 
+
+        filters: ValueFilter {
+            roleName: "workspaceId"
+            value: root.ws_id
+        }
+    }
+
+    radius: 25
+
+    implicitWidth: occupied || focused ? 23 : 10
+    implicitHeight: occupied ? layout.height : 10
+    color: focused ? Colours.hl3 : occupied ? Colours.hl1 : Colours.text
+
+    Column {
+        id: layout
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        //
+        add: Transition {
+            // animations for new items
+            Anim {
+                // "pop" in
+                property: "scale"
+                duration: 250
+                from: 0
+                to: 1
+                easing.bezierCurve: Anims.curves.standardDecel
+            }
+        }
+
+        spacing: -10 
+        rightPadding: 1
+
+
+        Repeater {
+            model: windows
+
+            Icon {
+                required property var modelData
+                color: root.focused ? Colours.dtext : Colours.text
+
+                text: Icons.getAppIcon(modelData.appId) 
+
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 250
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: Anims.curves.standardAccel
+                    }
+                }
+            }
+
+        }
+    }
+
+
+    Behavior on implicitWidth {
+        // smooth horizontal movement
+        Anim {}
+    }
+
+    Behavior on color {
+        ColorAnimation {
+            duration: 250
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Anims.curves.standardAccel
+        }
+    }
+}

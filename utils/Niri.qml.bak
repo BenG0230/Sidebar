@@ -1,0 +1,15 @@
+pragma Singleton 
+
+import QtQuick
+import Niri 0.1
+
+Niri {
+    id: root 
+
+    Component.onCompleted: connect()
+
+    onConnected: console.info("Connected to Niri")
+    onErrorOccurred: function (error) {
+        console.error("Niri error:", error)
+    }
+}
